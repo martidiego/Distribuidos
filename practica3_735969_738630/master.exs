@@ -39,47 +39,50 @@ end
 
 
 def action(timeout,workerSDP, workerDiv, workerSuma, c_pid, retry, idOperaciones, num, yaMandado) when retry < 5 do
-	if yaMandado == 0 do
-		send(workerSDP, {:reqWorkerSDP, {self(), num, idOperaciones}})	#Envia al worker suma_divisores_propios la peticion
-		send(workerDiv, {:reqWorkerDiv, {self(), num, idOperaciones}})	#Envia al worker divisores_propios la peticion
+	case yaMandado do
+		0 -> send(workerSDP, {:reqWorkerSDP, {self(), num, idOperaciones}})	#Envia al worker suma_divisores_propios la peticion
+			send(workerDiv, {:reqWorkerDiv, {self(), num, idOperaciones}})	#Envia al worker divisores_propios la peticion
+		2 -> send(workerDiv, {:reqWorkerDiv, {self(), num, idOperaciones}})	#Envia al worker divisores_propios la peticion
+		_ -> nil
 	end
 	result = receive do
-		{:replyDiv, divisores, idOp, workerDiv} ->
-				if (idOp == -1), do: send(workerDiv, {:reqWorkerDiv, {self(), num, idOperaciones}})
-				if (idOp == idOperaciones) do
-					sum = receive do
-						{:replySuma, suma, idOp, workerSuma} -> 
-														if (idOp == -1), do: send(workerSuma, {:reqWorkerSuma, {self(), num, idOperaciones}})	
-														if idOp == idOperaciones do
-														 	suma 
-														else
-															action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,0)
-														end
-						#Compruebo si SDP ha acabado también, si ha acabado, eligo esta opción para no retrasar al cliente
-						{:replySDP, sumDivisoresProp, idOp, workerSDP_new} -> 
-													if (idOp == -1), do: send(workerSDP_new, {:reqWorkerSDP, {self(), num, idOperaciones}})		
-													if idOp == idOperaciones do
-													 	sumDivisoresProp 
-													else
-													 	action(timeout,workerSDP_new, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,0)
-													end
+		{:replyDiv, divisores, idOp, workerDiv_new} ->
+			case idOp do
+				-1 -> send(workerDiv_new, {:reqWorkerDiv, {self(), num, idOperaciones}})
+						action(timeout,workerSDP, workerDiv_new, workerSuma,c_pid,retry,idOperaciones,num,1)
+				idOperaciones ->
+								sum = receive do
+									{:replySum, suma, idOp, workerSuma_new} -> 
+																	case idOp do
+																		-1 -> send(workerSuma_new, {:reqWorkerSuma, {self(), num, idOperaciones}})
+																				action(timeout,workerSDP, workerDiv, workerSuma_new,c_pid,retry,idOperaciones,num,2)
+																		idOperaciones -> suma
+																		_ -> action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,2)
+																	end
+																	
+									#Compruebo si SDP ha acabado también, si ha acabado, eligo esta opción para no retrasar al cliente
+									{:replySDP, sumDivisoresProp, idOp, workerSDP_new} -> 
+																case idOp do
+																	-1 -> action(timeout,workerSDP_new, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,0)
+																	idOperaciones -> sumDivisoresProp
+																	_ -> action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,2)
+																end
 
-					after
-						timeout -> action(timeout*(trunc(:math.pow(2,retry))), workerSDP, workerDiv, workerSuma, c_pid, retry+1, idOperaciones, num, 0) #Vuelve a intentar
-					end
-					sum
-				else
-					#Descarta respuesta recibida
-					action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,1)
-				end
+								after
+									timeout -> action(timeout*(trunc(:math.pow(2,retry))), workerSDP, workerDiv, workerSuma, c_pid, retry+1, idOperaciones, num, 0) #Vuelve a intentar
+								end
+								sum
+				_ -> action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,1)
+			end
 				
-		{:replySDP, sumDivisoresProp, idOp, workerSDP} -> 
-													if (idOp == -1), do: send(workerSDP, {:reqWorkerSDP, {self(), num, idOperaciones}})		
-													if idOp == idOperaciones do
-													 	sumDivisoresProp 
-													else
-														#Descarta operacion recibida
-													 	action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,1)
+		{:replySDP, sumDivisoresProp, idOp, workerSDP_new} -> IO.puts("Recibido:")
+																IO.puts(idOp)
+																IO.puts("-----------")
+													case idOp do
+														-1 -> send(workerSDP_new, {:reqWorkerSDP, {self(), num, idOperaciones}})	
+															action(timeout,workerSDP_new, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,1)
+														idOperaciones -> sumDivisoresProp
+														_ -> action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,1)
 													end
 	after
 		timeout -> action(timeout*(trunc(:math.pow(2,retry))), workerSDP, workerDiv, workerSuma, c_pid, retry+1, idOperaciones, num, 0) #Vuelve a intentar
