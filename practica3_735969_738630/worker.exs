@@ -44,15 +44,18 @@ defmodule Worker do
 		timeout=2000
 		receive do
 			{:eleccion, pid_origen}->
+        IO.puts("recibido: eleccion")
 				if (pid_origen<self()) do
 					send(pid_origen, {:ok})
 					empezar_eleccion(lista, tipo, pid_master)
 				else
 					empezar_worker(lista, tipo, pid_master)
 				end
-			{:soy_lider}->empezar_worker(lista, tipo, pid_master)
+			{:soy_lider}->IO.puts("recibido: soy_lider")
+                    empezar_worker(lista, tipo, pid_master)
 				
-			{:latido_lider}->empezar_worker(lista, tipo, pid_master)
+			{:latido_lider}->IO.puts("recibido: latido_lider")
+                    empezar_worker(lista, tipo, pid_master)
 				
 			after
 				timeout->empezar_eleccion(lista, tipo, pid_master)
@@ -65,9 +68,9 @@ defmodule Worker do
 		:true->empezar_eleccion(lista, tipo, pid_master)
 	 end
 	 case tipo do
-		:replySDP->workerSDP(lista)
-		:replyDiv->workerDivisores(lista)
-		:replySuma->workerSuma(lista)
+		:replySDP->workerSDP(lista, pid_master)
+		:replyDiv->workerDivisores(lista, pid_master)
+		:replySuma->workerSuma(lista, pid_master)
 	  end
 	end
 
@@ -80,16 +83,19 @@ defmodule Worker do
     end
   end  
 
-  def workerSDP(lista) do
-    loopI(init(), :workerSDP, lista)
+  def workerSDP(lista, pid_master) do
+    IO.puts("soy lider sdp")
+    loopI(init(), :workerSDP, lista, pid_master)
   end
 
-   def workerDivisores(lista) do
-    loopI(init(), :workerDiv, lista)
+   def workerDivisores(lista, pid_master) do
+    IO.puts("soy lider workerDivisores")
+    loopI(init(), :workerDiv, lista, pid_master)
   end
 
-   def workerSuma(lista) do
-    loopI(init(), :workerSum, lista)
+   def workerSuma(lista, pid_master) do
+    IO.puts("soy lider suma")
+    loopI(init(), :workerSum, lista, pid_master)
   end
 
 	defp enviar_latido([]) do  
@@ -101,7 +107,7 @@ defmodule Worker do
 	end
 		
 
-  defp loopI(worker_type, which_worker, lista) do
+  defp loopI(worker_type, which_worker, lista, pid_master) do
     IO.puts(worker_type)
     delay = case worker_type do
       :crash -> if :rand.uniform(100) > 75, do: :infinity
@@ -120,7 +126,7 @@ defmodule Worker do
                                   send(m_pid, {:replySDP, suma_divisores_propios(m), idOp, self()})
                               end
 					  after
-						timeout->nuevo_worker(which_worker,lista, :true)
+						timeout->nuevo_worker(which_worker,lista, :true, pid_master)
                       end
 
       :workerDiv ->   receive do
@@ -130,7 +136,7 @@ defmodule Worker do
                                   send(m_pid, {:replyDiv, divisores_propios(m), idOp, self()})
                               end
 					  after
-						timeout->nuevo_worker(which_worker,lista, :true)
+						timeout->nuevo_worker(which_worker,lista, :true, pid_master)
                       end
 
       :workerSum ->   receive do
@@ -140,12 +146,12 @@ defmodule Worker do
                                   send(m_pid, {:replySuma, suma(m), idOp, self()})
                               end
 					  after
-						timeout->nuevo_worker(which_worker,lista, :true)
+						timeout->nuevo_worker(which_worker,lista, :true, pid_master)
                       end
     end
   
 
-    loopI(worker_type, which_worker,lista)
+    loopI(worker_type, which_worker,lista, pid_master)
   end
 
   defp divisores_propios(a,a) do
