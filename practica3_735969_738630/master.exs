@@ -40,21 +40,20 @@ end
 
 def action(timeout,workerSDP, workerDiv, workerSuma, c_pid, retry, idOperaciones, num, yaMandado) when retry < 5 do
 	if yaMandado == 0 do
-		send(workerSDP), {:reqWorkerSDP, {self(), num, idOperaciones}})	#Envia al worker suma_divisores_propios la peticion
+		send(workerSDP, {:reqWorkerSDP, {self(), num, idOperaciones}})	#Envia al worker suma_divisores_propios la peticion
 		send(workerDiv, {:reqWorkerDiv, {self(), num, idOperaciones}})	#Envia al worker divisores_propios la peticion
 	end
 	result = receive do
 		{:replyDiv, divisores, idOp, workerDiv} ->
 				if (idOp == -1), do: send(workerDiv, {:reqWorkerDiv, {self(), num, idOperaciones}})
 				if (idOp == idOperaciones) do
-					send(workerSuma,1), {:reqWorkerSuma, {self(), divisores, idOperaciones}})
 					sum = receive do
 						{:replySuma, suma, idOp, workerSuma} -> 
 														if (idOp == -1), do: send(workerSuma, {:reqWorkerSuma, {self(), num, idOperaciones}})	
 														if idOp == idOperaciones do
 														 	suma 
 														else
-															action(timeout,workers,c_pid,retry,idOperaciones,num,0)
+															action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,0)
 														end
 						#Compruebo si SDP ha acabado también, si ha acabado, eligo esta opción para no retrasar al cliente
 						{:replySDP, sumDivisoresProp, idOp, workerSDP} -> 
