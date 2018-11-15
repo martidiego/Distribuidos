@@ -118,7 +118,8 @@ defmodule Worker do
     case which_worker do
       :replySDP ->   receive do
                        {:reqWorkerSDP, {m_pid,m, idOp}} ->
-                                if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
+                                if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do
+                                IO.inspect(idOp, label: "Envio operacion: ") 
                                   send(m_pid, {:replySDP, suma_divisores_propios(m), idOp, self()})
                               end
                               workerSDP(lista, pid_master)
@@ -129,6 +130,7 @@ defmodule Worker do
       :replyDiv ->   receive do
                        {:reqWorkerDiv, {m_pid,m, idOp}} -> 
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
+                                   IO.inspect(idOp, label: "Envio operacion: ") 
                                   send(m_pid, {:replyDiv, divisores_propios(m), idOp, self()})
                               end
                               workerDivisores(lista, pid_master)
@@ -138,7 +140,8 @@ defmodule Worker do
 
       :replySum ->   receive do
                        {:reqWorkerSuma, {m_pid,m, idOp}} ->
-                                if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
+                                if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do
+                                 IO.inspect(idOp, label: "Envio operacion: ")  
                                   send(m_pid, {:replySum, suma(m), idOp, self()})
                               end
                               workerSuma(lista, pid_master)
