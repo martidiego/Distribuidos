@@ -27,15 +27,15 @@ Master.master({:workerSDP, :"workerSDP1@127.0.0.1"}, {:workerDiv, :"workerDiv1@1
 
 Worker.nuevo_worker(:replySDP, [{:workerSDP,:"workerSDP2@127.0.0.1"},{:workerSDP,:"workerSDP3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
 Worker.nuevo_worker(:replySum, [{:workerSum,:"workerSum2@127.0.0.1"},{:workerSum,:"workerSum3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
-Worker.nuevo_worker(:replyDiv, [{:workerDiv,:"workerDiv2@127.0.0.1"},{:workerSum,:"workerDiv3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replyDiv, [{:workerDiv,:"workerDiv2@127.0.0.1"},{:workerDiv,:"workerDiv3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
 
 Worker.nuevo_worker(:replySDP, [{:workerSDP,:"workerSDP1@127.0.0.1"},{:workerSDP,:"workerSDP3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
 Worker.nuevo_worker(:replySum, [{:workerSum,:"workerSum1@127.0.0.1"},{:workerSum,:"workerSum3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
-Worker.nuevo_worker(:replyDiv, [{:workerDiv,:"workerDiv1@127.0.0.1"},{:workerSum,:"workerDiv3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replyDiv, [{:workerDiv,:"workerDiv1@127.0.0.1"},{:workerDiv,:"workerDiv3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
 
 Worker.nuevo_worker(:replySDP, [{:workerSDP,:"workerSDP1@127.0.0.1"},{:workerSDP,:"workerSDP2@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
 Worker.nuevo_worker(:replySum, [{:workerSum,:"workerSum1@127.0.0.1"},{:workerSum,:"workerSum2@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
-Worker.nuevo_worker(:replyDiv, [{:workerDiv,:"workerDiv1@127.0.0.1"},{:workerSum,:"workerDiv2@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replyDiv, [{:workerDiv,:"workerDiv1@127.0.0.1"},{:workerDiv,:"workerDiv2@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
 
 
 
