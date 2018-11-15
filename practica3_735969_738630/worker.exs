@@ -121,6 +121,7 @@ defmodule Worker do
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
                                   send(m_pid, {:replySDP, suma_divisores_propios(m), idOp, self()})
                               end
+                              workerSDP(lista, pid_master)
 					  after
 						timeout->nuevo_worker(which_worker,lista, :false, pid_master)
                       end
@@ -130,6 +131,7 @@ defmodule Worker do
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
                                   send(m_pid, {:replyDiv, divisores_propios(m), idOp, self()})
                               end
+                              workerDivisores(lista, pid_master)
 					  after
 						timeout->nuevo_worker(which_worker,lista, :false, pid_master)
                       end
@@ -139,13 +141,12 @@ defmodule Worker do
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
                                   send(m_pid, {:replySum, suma(m), idOp, self()})
                               end
+                              workerSuma(lista, pid_master)
 					  after
 						timeout->nuevo_worker(which_worker,lista, :false, pid_master)
                       end
     end
   
-
-    loopI(worker_type, which_worker,lista, pid_master)
   end
 
   defp divisores_propios(a,a) do
