@@ -1,7 +1,7 @@
 # AUTORES: 
 # NIAs: numeros de identificacion de los alumnos
 # FICHERO: nombre del fichero
-# FECHA: fecha de realizacion
+# FECHA: 15 noviembre
 # TIEMPO: tiempo en horas de codificacion
 # DESCRIPCION: breve descripcion del contenido del fichero
 
