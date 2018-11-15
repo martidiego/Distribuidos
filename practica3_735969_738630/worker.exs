@@ -110,7 +110,7 @@ defmodule Worker do
   defp loopI(worker_type, which_worker, lista, pid_master) do
     IO.puts(worker_type)
     delay = case worker_type do
-      :crash -> if :rand.uniform(100) > 75, do: :infinity
+      :crash -> if :rand.uniform(100) > 75, do: :infinity, else: 0
       :timing -> :rand.uniform(100)*1000
       _ ->  0
     end
