@@ -56,12 +56,12 @@ def action(timeout,workerSDP, workerDiv, workerSuma, c_pid, retry, idOperaciones
 															action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,0)
 														end
 						#Compruebo si SDP ha acabado también, si ha acabado, eligo esta opción para no retrasar al cliente
-						{:replySDP, sumDivisoresProp, idOp, workerSDP} -> 
-													if (idOp == -1), do: send(workerSDP, {:reqWorkerSDP, {self(), num, idOperaciones}})		
+						{:replySDP, sumDivisoresProp, idOp, workerSDP_new} -> 
+													if (idOp == -1), do: send(workerSDP_new, {:reqWorkerSDP, {self(), num, idOperaciones}})		
 													if idOp == idOperaciones do
 													 	sumDivisoresProp 
 													else
-													 	action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,0)
+													 	action(timeout,workerSDP_new, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,0)
 													end
 
 					after

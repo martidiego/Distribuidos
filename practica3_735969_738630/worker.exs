@@ -42,7 +42,7 @@ defmodule Worker do
 
 
 	def empezar_worker(lista, tipo, pid_master) do
-		timeout=5000
+		timeout=1000
 		receive do
 			{:eleccion, pid_origen}->
         IO.puts("recibido: eleccion")
