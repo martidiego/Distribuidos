@@ -17,56 +17,57 @@ defmodule Worker do
 	end
 		
 
-	def mandar_soy_lider([]) do
+	def mandar_soy_lider([], tipo, pid_master) do
+      send(pid_master, {:tipo, -1, -1, self()})
 	end
 
-	def mandar_soy_lider([first|others]) do
+	def mandar_soy_lider([first|others], tipo, pid_master) do
 		send(first, {:soy_lider})
-		mandar_soy_lider(others)
+		mandar_soy_lider(others, tipo, pid_master)
 	end
 
 
-	def empezar_eleccion(lista) do
+	def empezar_eleccion(lista, tipo, pid_master) do
 		mandar_eleccion(lista)
 		timeout=1000
 		receive do
-			{:ok}->empezar_worker(lista)
+			{:ok}->empezar_worker(lista, tipo, pid_master)
 					
 			after
-				timeout->mandar_soy_lider(lista)
+				timeout->mandar_soy_lider(lista, tipo, pid_master)
 		end
 	end
 
 
 
-	def empezar_worker(lista) do
+	def empezar_worker(lista, tipo, pid_master) do
 		timeout=2000
 		receive do
 			{:eleccion, pid_origen}->
 				if (pid_origen<self()) do
 					send(pid_origen, {:ok})
-					empezar_eleccion(lista)
+					empezar_eleccion(lista, tipo, pid_master)
 				else
-					empezar_worker(lista)
+					empezar_worker(lista, tipo, pid_master)
 				end
-			{:soy_lider}->empezar_worker(lista)
+			{:soy_lider}->empezar_worker(lista, tipo, pid_master)
 				
-			{:latido_lider}->empezar_worker(lista)
+			{:latido_lider}->empezar_worker(lista, tipo, pid_master)
 				
 			after
-				timeout->empezar_eleccion(lista)
+				timeout->empezar_eleccion(lista, tipo, pid_master)
 		end
 	end
 					                                                                                        
-  def nuevo_worker(tipo, lista, lanzar) do
+  def nuevo_worker(tipo, lista, lanzar, pid_master) do
 	 case lanzar do
-		:false->empezar_worker(lista)
-		:true->empezar_eleccion(lista)
+		:false->empezar_worker(lista, tipo, pid_master)
+		:true->empezar_eleccion(lista, tipo, pid_master)
 	 end
 	 case tipo do
-		:sdp->workerSDP(lista)
-		:divisores->workerDivisores(lista)
-		:suma->workerSuma(lista)
+		:replySDP->workerSDP(lista)
+		:replyDiv->workerDivisores(lista)
+		:replySuma->workerSuma(lista)
 	  end
 	end
 
