@@ -26,9 +26,15 @@ defp masterAux(worker_div, worker_suma, worker_sdp, num1, listaPares, c_pid) do
 	IO.puts(num1)
 	sumaA = action(10000, worker_div, worker_suma, worker_sdp, c_pid, 0, num1, num1,0)
 	sumaB = action(10000, worker_div, worker_suma, worker_sdp, c_pid, 0, num1, sumaA,0)
-	IO.puts(num1)
 	#Comprueba que los dos numeros sean amigos (sumaA y num1) y los añade en la lista si no estaba ya el par
-	if sumaB == num1 and sumaA != num1 and not(Enum.member?(listaPares,{sumaA,num1})), do: masterAux(worker_div, worker_suma, worker_sdp, num1+1, listaPares++[{num1,sumaA}], c_pid), else: masterAux(worker_div, worker_suma, worker_sdp, num1+1, listaPares, c_pid)
+	if sumaB == num1 and sumaA != num1 and not(Enum.member?(listaPares,{sumaA,num1})) do
+		IO.puts (num1)
+		IO.puts(sumaA)
+		IO.puts("---------------")
+	 	masterAux(worker_div, worker_suma, worker_sdp, num1+1, listaPares++[{num1,sumaA}], c_pid) 
+	else 
+	 	masterAux(worker_div, worker_suma, worker_sdp, num1+1, listaPares, c_pid)
+	end
 end
 
 
