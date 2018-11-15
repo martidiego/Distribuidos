@@ -50,11 +50,11 @@ def action(timeout,workerSDP, workerDiv, workerSuma, c_pid, retry, idOperaciones
 			case idOp do
 				-1 -> send(workerDiv_new, {:reqWorkerDiv, {self(), num, idOperaciones}})
 						action(timeout,workerSDP, workerDiv_new, workerSuma,c_pid,retry,idOperaciones,num,1)
-				idOperaciones ->
+				idOperaciones -> send(workerSuma, {:reqWorkerSuma, {self(), divisores, idOperaciones}})
 								sum = receive do
 									{:replySum, suma, idOp, workerSuma_new} -> 
 																	case idOp do
-																		-1 -> send(workerSuma_new, {:reqWorkerSuma, {self(), num, idOperaciones}})
+																		-1 -> send(workerSuma_new, {:reqWorkerSuma, {self(), divisores, idOperaciones}})
 																				action(timeout,workerSDP, workerDiv, workerSuma_new,c_pid,retry,idOperaciones,num,2)
 																		idOperaciones -> suma
 																		_ -> action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,2)
