@@ -1,0 +1,19 @@
+
+Process.register(self(), :workerSDP)
+
+Process.register(self(), :workerSum)
+
+Process.register(self(), :workerDiv)
+
+Process.register(self(), :master)
+
+
+Worker.workerDivisores
+
+Worker.workerSuma
+
+Worker.workerSDP
+
+Master.master([{:workerDiv, :"workerDiv@127.0.0.1"}, {:workerSum, :"workerSuma@127.0.0.1"}, {:workerSDP, :"workerSDP@127.0.0.1"}])
+
+Perfectos_cliente.cliente({:master, :"master@127.0.0.1"}, :uno)
