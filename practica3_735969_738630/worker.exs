@@ -156,7 +156,7 @@ defmodule Worker do
     if rem(a,b) == 0, do: [b] ++ divisores_propios(a,b+1), else: divisores_propios(a,b+1)
   end
 
-def divisores_propios(a) when a == 1 do
+def divisores_propios(a) when a == 1 or a == 0 do
     []
   end
 
