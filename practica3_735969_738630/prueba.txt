@@ -1,6 +1,10 @@
 
 
-iex --name var@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerSDP1@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerSDP2@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerSDP3@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerDiv3@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+
 
 
 Process.register(self(), :workerSDP)
@@ -10,6 +14,21 @@ Process.register(self(), :workerSum)
 Process.register(self(), :workerDiv)
 
 Process.register(self(), :master)
+
+Master.master({:workerSDP, :"workerSDP1@127.0.0.1"}, {:workerDiv, :"workerDiv1@127.0.0.1"}, {:workerSum, :"workerSuma1@127.0.0.1"})
+
+Worker.nuevo_worker(:replySDP, [{:workerSDP,:"workerSDP2@127.0.0.1"},{:workerSDP,:"workerSDP3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replySum, [{:workerSum,:"workerSum2@127.0.0.1"},{:workerSum,:"workerSum3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replyDiv, [{:workerDiv,:"workerDiv2@127.0.0.1"},{:workerSum,:"workerDiv3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+
+Worker.nuevo_worker(:replySDP, [{:workerSDP,:"workerSDP1@127.0.0.1"},{:workerSDP,:"workerSDP3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replySum, [{:workerSum,:"workerSum1@127.0.0.1"},{:workerSum,:"workerSum3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replySum, [{:workerDiv,:"workerDiv1@127.0.0.1"},{:workerSum,:"workerDiv3@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+
+Worker.nuevo_worker(:replySDP, [{:workerSDP,:"workerSDP1@127.0.0.1"},{:workerSDP,:"workerSDP2@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replySum, [{:workerSum,:"workerSum1@127.0.0.1"},{:workerSum,:"workerSum2@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+Worker.nuevo_worker(:replySum, [{:workerDiv,:"workerDiv1@127.0.0.1"},{:workerSum,:"workerDiv2@127.0.0.1"}], :false, {:master,:"master@127.0.0.1"})
+
 
 
 Worker.workerDivisores
