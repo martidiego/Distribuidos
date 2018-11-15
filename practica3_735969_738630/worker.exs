@@ -29,6 +29,7 @@ defmodule Worker do
 
 	def empezar_eleccion(lista, tipo, pid_master) do
 		mandar_eleccion(lista)
+    IO.puts("He mandado eleccion")
 		timeout=1000
 		receive do
 			{:ok}->empezar_worker(lista, tipo, pid_master)
@@ -41,7 +42,7 @@ defmodule Worker do
 
 
 	def empezar_worker(lista, tipo, pid_master) do
-		timeout=2000
+		timeout=5000
 		receive do
 			{:eleccion, pid_origen}->
         IO.puts("recibido: eleccion")
@@ -110,14 +111,14 @@ defmodule Worker do
   defp loopI(worker_type, which_worker, lista, pid_master) do
     IO.puts(worker_type)
     delay = case worker_type do
-      :crash -> if :rand.uniform(100) > 75, do: :infinity, else: 0
-      :timing -> :rand.uniform(100)*1000
+      :crash -> if :rand.uniform(100) > 75, do: 10000, else: 0
+      :timing -> :rand.uniform(100)*10 #00
       _ ->  0
     end
     IO.puts(delay)
     Process.sleep(delay)
 	enviar_latido(lista)
-	timeout=1500
+	timeout=500
     case which_worker do
       :replySDP ->   receive do
                        {:reqWorkerSDP, {m_pid,m, idOp}} ->
@@ -126,7 +127,7 @@ defmodule Worker do
                                   send(m_pid, {:replySDP, suma_divisores_propios(m), idOp, self()})
                               end
 					  after
-						timeout->nuevo_worker(which_worker,lista, :true, pid_master)
+						timeout->nuevo_worker(which_worker,lista, :false, pid_master)
                       end
 
       :replyDiv ->   receive do
@@ -136,7 +137,7 @@ defmodule Worker do
                                   send(m_pid, {:replyDiv, divisores_propios(m), idOp, self()})
                               end
 					  after
-						timeout->nuevo_worker(which_worker,lista, :true, pid_master)
+						timeout->nuevo_worker(which_worker,lista, :false, pid_master)
                       end
 
       :replySum ->   receive do
@@ -146,7 +147,7 @@ defmodule Worker do
                                   send(m_pid, {:replySuma, suma(m), idOp, self()})
                               end
 					  after
-						timeout->nuevo_worker(which_worker,lista, :true, pid_master)
+						timeout->nuevo_worker(which_worker,lista, :false, pid_master)
                       end
     end
   
