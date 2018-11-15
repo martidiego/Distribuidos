@@ -85,17 +85,17 @@ defmodule Worker do
 
   def workerSDP(lista, pid_master) do
     IO.puts("soy lider sdp")
-    loopI(init(), :workerSDP, lista, pid_master)
+    loopI(init(), :replySDP, lista, pid_master)
   end
 
    def workerDivisores(lista, pid_master) do
     IO.puts("soy lider workerDivisores")
-    loopI(init(), :workerDiv, lista, pid_master)
+    loopI(init(), :replyDiv, lista, pid_master)
   end
 
    def workerSuma(lista, pid_master) do
     IO.puts("soy lider suma")
-    loopI(init(), :workerSum, lista, pid_master)
+    loopI(init(), :replySum, lista, pid_master)
   end
 
 	defp enviar_latido([]) do  
@@ -119,7 +119,7 @@ defmodule Worker do
 	enviar_latido(lista)
 	timeout=1500
     case which_worker do
-      :workerSDP ->   receive do
+      :replySDP ->   receive do
                        {:reqWorkerSDP, {m_pid,m, idOp}} ->
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
                                   IO.puts("Envio respuesta")
@@ -129,7 +129,7 @@ defmodule Worker do
 						timeout->nuevo_worker(which_worker,lista, :true, pid_master)
                       end
 
-      :workerDiv ->   receive do
+      :replyDiv ->   receive do
                        {:reqWorkerDiv, {m_pid,m, idOp}} -> 
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
                                   IO.puts("Envio respuesta")
@@ -139,7 +139,7 @@ defmodule Worker do
 						timeout->nuevo_worker(which_worker,lista, :true, pid_master)
                       end
 
-      :workerSum ->   receive do
+      :replySum ->   receive do
                        {:reqWorkerSuma, {m_pid,m, idOp}} ->
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
                                   IO.puts("Envio respuesta")
