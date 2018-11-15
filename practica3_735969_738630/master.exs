@@ -51,14 +51,14 @@ def action(timeout,workerSDP, workerDiv, workerSuma, c_pid, retry, idOperaciones
 				-1 -> send(workerDiv_new, {:reqWorkerDiv, {self(), num, idOperaciones}})
 						{sumaDP, wSDP, wDiv, wSum}=action(timeout,workerSDP, workerDiv_new, workerSuma,c_pid,retry,idOperaciones,num,1)
 						{sumaDP, wSDP, workerDiv_new, wSum}
-				idOperaciones -> send(workerSuma, {:reqWorkerSuma, {self(), divisores, idOperaciones}})
+				^idOperaciones -> send(workerSuma, {:reqWorkerSuma, {self(), divisores, idOperaciones}})
 								res = receive do
 									{:replySum, suma, idOp, workerSuma_new} -> 
 																	case idOp do
 																		-1 -> send(workerSuma_new, {:reqWorkerSuma, {self(), divisores, idOperaciones}})
 																				{sumaDP, wSDP, wDiv, wSum}=action(timeout,workerSDP, workerDiv, workerSuma_new,c_pid,retry,idOperaciones,num,2)
 																				{sumaDP, wSDP, wDiv, workerSuma_new}
-																		idOperaciones -> {suma, workerSDP, workerDiv, workerSuma}
+																		^idOperaciones -> {suma, workerSDP, workerDiv, workerSuma}
 																		_ -> action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,2)
 																	end
 																	
@@ -67,7 +67,7 @@ def action(timeout,workerSDP, workerDiv, workerSuma, c_pid, retry, idOperaciones
 																case idOp do
 																	-1 -> {sumaDP, wSDP, wDiv, wSum}=action(timeout,workerSDP_new, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,0)
 																			{sumaDP, workerSDP_new, wDiv, wSum}
-																	idOperaciones -> {sumDivisoresProp, workerSDP, workerDiv, workerSuma}
+																	^idOperaciones -> {sumDivisoresProp, workerSDP, workerDiv, workerSuma}
 																	_ -> action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,2)
 																end
 
@@ -83,7 +83,7 @@ def action(timeout,workerSDP, workerDiv, workerSuma, c_pid, retry, idOperaciones
 														-1 -> send(workerSDP_new, {:reqWorkerSDP, {self(), num, idOperaciones}})	
 															{sumaDP, wSDP, wDiv, wSum}=action(timeout,workerSDP_new, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,1)
 															{sumaDP, workerSDP_new, wDiv, wSum}
-														idOperaciones -> {sumDivisoresProp, workerSDP, workerDiv, workerSuma}
+														^idOperaciones -> {sumDivisoresProp, workerSDP, workerDiv, workerSuma}
 														_ -> action(timeout,workerSDP, workerDiv, workerSuma,c_pid,retry,idOperaciones,num,1)
 													end
 	after
