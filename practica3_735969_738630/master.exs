@@ -44,18 +44,21 @@ def action(timeout,workers, c_pid, retry, idOperaciones, num, yaMandado) when re
 		send(hd(workers), {:reqWorkerDiv, {self(), num, idOperaciones}})	#Envia al worker divisores_propios la peticion
 	end
 	result = receive do
-		{:replyDiv, divisores, idOp} ->
+		{:replyDiv, divisores, idOp, workerDiv} ->
+				if (idOp == -1), do: send(workerDiv, {:reqWorkerDiv, {self(), num, idOperaciones}})
 				if (idOp == idOperaciones) do
 					send(Enum.at(workers,1), {:reqWorkerSuma, {self(), divisores, idOperaciones}})
 					sum = receive do
-						{:replySuma, suma, idOp} -> 	
+						{:replySuma, suma, idOp, workerSuma} -> 
+														if (idOp == -1), do: send(workerSuma, {:reqWorkerSuma, {self(), num, idOperaciones}})	
 														if idOp == idOperaciones do
 														 	suma 
 														else
 															action(timeout,workers,c_pid,retry,idOperaciones,num,0)
 														end
 						#Compruebo si SDP ha acabado también, si ha acabado, eligo esta opción para no retrasar al cliente
-						{:replySDP, sumDivisoresProp, idOp} -> 		
+						{:replySDP, sumDivisoresProp, idOp, workerSDP} -> 
+													if (idOp == -1), do: send(workerSDP, {:reqWorkerSDP, {self(), num, idOperaciones}})		
 													if idOp == idOperaciones do
 													 	sumDivisoresProp 
 													else
@@ -71,7 +74,8 @@ def action(timeout,workers, c_pid, retry, idOperaciones, num, yaMandado) when re
 					action(timeout,workers,c_pid,retry,idOperaciones,num,1)
 				end
 				
-		{:replySDP, sumDivisoresProp, idOp} -> 		
+		{:replySDP, sumDivisoresProp, idOp, workerSDP} -> 
+													if (idOp == -1), do: send(workerSDP, {:reqWorkerSDP, {self(), num, idOperaciones}})		
 													if idOp == idOperaciones do
 													 	sumDivisoresProp 
 													else
