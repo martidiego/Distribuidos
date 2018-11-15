@@ -3,7 +3,15 @@
 iex --name workerSDP1@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
 iex --name workerSDP2@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
 iex --name workerSDP3@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerDiv1@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerDiv2@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
 iex --name workerDiv3@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerSum1@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerSum2@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name workerSum3@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+
+iex --name master@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
+iex --name cliente@127.0.0.1 --erl '-kernel inet_dist_listen_min 32000' --erl '-kernel inet_dist_listen_max 32009' --cookie dist
 
 
 
