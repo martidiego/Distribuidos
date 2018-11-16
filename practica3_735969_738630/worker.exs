@@ -43,8 +43,8 @@ defmodule Worker do
 	def empezar_worker(lista, tipo, pid_master) do
     timeout=case tipo do
       :replySDP -> 100
-      :replyDiv -> 200
-      :replySum -> 400
+      :replyDiv -> 150
+      :replySum -> 250
     end
 		receive do
 			{:eleccion, pid_origen}->
