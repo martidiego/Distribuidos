@@ -1,9 +1,9 @@
-# AUTORES: 
-# NIAs: numeros de identificacion de los alumnos
-# FICHERO: nombre del fichero
-# FECHA: 15 noviembre
-# TIEMPO: tiempo en horas de codificacion
-# DESCRIPCION: breve descripcion del contenido del fichero
+# AUTORES: David Solanas Sanz y Diego Martínez Baselga
+# NIAs: 738630 y 735969
+# FICHERO: master.exs
+# FECHA: 15 noviembre 2018
+# TIEMPO: 25 horas
+# DESCRIPCION: código del proceso master
 
 defmodule Master do
 

@@ -1,9 +1,9 @@
-# AUTORES: 
-# NIAs: numeros de identificacion de los alumnos
-# FICHERO: nombre del fichero
-# FECHA: fecha de realizacion
-# TIEMPO: tiempo en horas de codificacion
-# DESCRIPCION: breve descripcion del contenido del fichero
+# AUTORES: David Solanas Sanz y Diego Martínez Baselga
+# NIAs: 738630 y 735969
+# FICHERO: worker.exs
+# FECHA: 15 noviembre 2018
+# TIEMPO: 25 horas
+# DESCRIPCION: código de los procesos workers
 
 
 defmodule Worker do
