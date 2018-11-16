@@ -29,7 +29,7 @@ defmodule Worker do
 
 	def empezar_eleccion(lista, tipo, pid_master) do
 		mandar_eleccion(lista)
-		timeout=100
+		timeout=50
 		receive do
 			{:ok}->empezar_worker(lista, tipo, pid_master)
 					
@@ -41,7 +41,11 @@ defmodule Worker do
 
 
 	def empezar_worker(lista, tipo, pid_master) do
-		timeout=100
+    timeout=case tipo do
+      :replySDP -> 100
+      :replyDiv -> 200
+      :replySum -> 400
+    end
 		receive do
 			{:eleccion, pid_origen}->
 				if (pid_origen<self()) do
@@ -71,28 +75,42 @@ defmodule Worker do
 	  end
 	end
 
-  def init do 
-    case :rand.uniform(100) do
-      random when random > 80 -> :crash
-      random when random > 50 -> :omission
-      random when random > 25 -> :timing
-      _ -> :no_fault
+  def init(tipo) do 
+    case tipo do
+      :replySDP->case :rand.uniform(100) do
+                    random when random > 95 -> :crash
+                    random when random > 92 -> :timing
+                    random when random > 75 -> :omission
+                    _ -> :no_fault
+                  end
+      :replyDiv->case :rand.uniform(100) do
+                    random when random > 98 -> :crash
+                    random when random > 97 -> :timing
+                    random when random > 75 -> :omission
+                    _ -> :no_fault
+                  end
+      :replySum->case :rand.uniform(100) do
+                    random when random > 98 -> :crash
+                    random when random > 97 -> :timing
+                    random when random > 75 -> :omission
+                    _ -> :no_fault
+                 end
     end
   end  
 
   def workerSDP(lista, pid_master) do
     IO.puts("soy lider sdp")
-    loopI(init(), :replySDP, lista, pid_master)
+    loopI(init(:replySDP), :replySDP, lista, pid_master)
   end
 
    def workerDivisores(lista, pid_master) do
     IO.puts("soy lider workerDivisores")
-    loopI(init(), :replyDiv, lista, pid_master)
+    loopI(init(:replyDiv), :replyDiv, lista, pid_master)
   end
 
    def workerSuma(lista, pid_master) do
     IO.puts("soy lider suma")
-    loopI(init(), :replySum, lista, pid_master)
+    loopI(init(:replySum), :replySum, lista, pid_master)
   end
 
 	defp enviar_latido([]) do  
@@ -107,8 +125,8 @@ defmodule Worker do
   defp loopI(worker_type, which_worker, lista, pid_master) do
     IO.puts(worker_type)
     delay = case worker_type do
-      :crash -> if :rand.uniform(100) > 75, do: 5000, else: 0
-      :timing -> :rand.uniform(100)*10 #00
+      :crash -> if :rand.uniform(100) > 98, do: :infinity, else: 0
+      :timing -> :rand.uniform(200)*100 
       _ ->  0
     end
     IO.puts(delay)
@@ -116,7 +134,7 @@ defmodule Worker do
 	enviar_latido(lista)
 	timeout=50
     case which_worker do
-      :replySDP ->   receive do
+      :replySDP ->  receive do
                        {:reqWorkerSDP, {m_pid,m, idOp}} ->
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do
                                 IO.inspect(idOp, label: "Envio operacion: ") 
@@ -127,7 +145,8 @@ defmodule Worker do
 						timeout->nuevo_worker(which_worker,lista, :false, pid_master)
                       end
 
-      :replyDiv ->   receive do
+      :replyDiv ->   timeout=2*timeout
+            receive do
                        {:reqWorkerDiv, {m_pid,m, idOp}} -> 
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do 
                                    IO.inspect(idOp, label: "Envio operacion: ") 
@@ -138,7 +157,8 @@ defmodule Worker do
 						timeout->nuevo_worker(which_worker,lista, :false, pid_master)
                       end
 
-      :replySum ->   receive do
+      :replySum -> timeout=4*timeout  
+              receive do
                        {:reqWorkerSuma, {m_pid,m, idOp}} ->
                                 if (((worker_type == :omission) and (:rand.uniform(100) < 75)) or (worker_type == :timing) or (worker_type==:no_fault)) do
                                  IO.inspect(idOp, label: "Envio operacion: ")  

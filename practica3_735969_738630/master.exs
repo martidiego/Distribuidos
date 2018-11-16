@@ -28,9 +28,7 @@ defp masterAux(workerSDP, workerDiv, workerSuma, num1, listaPares, c_pid) do
 	{sumaB, workerSDPB, workerDivB, workerSumaB} = action(10000, workerSDPA, workerDivA, workerSumaA, c_pid, 0, num1, sumaA,0)
 	#Comprueba que los dos numeros sean amigos (sumaA y num1) y los añade en la lista si no estaba ya el par
 	if sumaB == num1 and sumaA != num1 and not(Enum.member?(listaPares,{sumaA,num1})) do
-		IO.puts (num1)
-		IO.puts(sumaA)
-		IO.puts("---------------")
+		IO.inspect({num1,sumaA}, label: "El par de numeros amigos encontrado es: ")
 	 	masterAux(workerSDPB, workerDivB, workerSumaB, num1+1, listaPares++[{num1,sumaA}], c_pid) 
 	else 
 	 	masterAux(workerSDPB, workerDivB, workerSumaB, num1+1, listaPares, c_pid)
